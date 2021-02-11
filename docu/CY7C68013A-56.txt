@@ -1,0 +1,114 @@
+quick notes:
+
+FX2LP
+EZ-USB FX2
+myboard:  CY7C68013-56PVC
+versa CY7C68013A-56PVXC
+
+myboard Pins not working: PB 3, 5, 6,7. only 1,2,4 are good
+
+CY7C68013a 
+Lcsoft Mini Board, Sigrok
+
+Tools:
+fx2load
+fxload = program to eeprom!
+cycfx2prog = loads into ram format: cycfx2prog prg:file.ihx  run 
+
+convert .ihx to .hex: packihx file.ihx > file.hex
+
+Jumper settings:
+J2 (eeprom) closed. address=0xA1
+= eeprom disabled, comes up as default cypress device.
+J2 open. address = 0xA0
+= eeprom enabled, can be programmed and will then boot from there.
+
+To program the eeprom, first keep J2 connected, insert to USB->becomes cypress standdard device.
+The disconnect J2 (to enable eeprom) and program it.
+
+expected I2C address of eeprom: 0xA0
+BOOTMODES when  the  EZ-USB  comes  out  of  reset:
+EEPROM first Byte:
+No EEPROM, or EEPROM with invalid boot data = default USB device uses hardwired  VID=0x04B4/PID=0x8613/DID=0xAnnn Cypress device.
+0xC0 = default USB device but uses  VID/PID/DID stored in first 16 eeprom bytes.
+0xC2 = custom device code is loaded from eeprom to ram and executed.
+other values first byte??
+
+
+https://community.cypress.com/t5/Knowledge-Base-Articles/Cypress-EZ-USB-FX2LP-based-Logic-Analyzer-using-Open-Source/ta-p/252866
+
+https://www.triplespark.net/elec/periph/USB-FX2/eeprom/
+
+https://www.geeetech.com/wiki/index.php/CY7C68013#Jumper_Instruction
+
+unbrick: just connect J2.
+on booting, SDA and SCL MUST be HIGH, else boot will fail.
+Upon booting, the port pins are tri-stated.
+
+IO-Ports:
+PA[0-7] = 8051 port or Fifo control lines
+PB[0-7] = 8051 Port or Fifo-Endpoint FE[0-7] or GPIF-FD[0-7]
+PD[0-7] = 8051 Port or Fifo-Endpoint FE[8-15] or GPIF-FD[8-15]
+CTL[0-2],RDY[0-1] = GPIF control lines
+CLKOUT = clock out if enabled
+IFCLK = input clock if enabled
+
+There are a set of configuratione registers between 0xE400 - 0xFE00
+There is a set of SFRs between 0x80 and 0xF9
+
+USB:
+•     Control Transfers, Endpoint 0, used for all setup/data/status/control
+•     Interrupt Transfers, only the HOST polls transfer requests, 1024bytes
+•     Isochronous Transfers,  continuously and periodically garantied bandwidth, videostream, 1024 bytes
+•     Bulk Transfers,  transfer large bursty data, bandwidth not garantied, 512bytes
+
+Descriptor hirarchy:
+•     Device Descriptors, only 1,  Product and Vendor ID
+•     Configuration Descriptors, many, defines power, host selects one active configuration, usually only 1
+•     Interface Descriptors, many, defines function-group like cdc, alternate interface
+•     Endpoint Descriptors, many, define  type of transfer, packet size
+•     String Descriptors, define strings
+
+Enumeration on plugin/reset:
+Host querys device descriptor
+Host sends BusAddresse to device.
+Host requests more config data like configurations
+
+The SIE engine can do a full enumeration by itself, thus being the standard cypress USB-device.
+A configuration bit selects if it enumerates as full or high speed device.
+
+Conditions at RESET:
+	The SIE engine handles all endpoint 0 controls. (RENUM=0)
+IF...
+1: no eeprom
+	SIE uses the standard cypress PID/VID to become a full/high speed device accepting download.
+	It could be used just like that as it has transfer endpoints!!
+
+2. eeprom with firstbyte:0xC0
+	same as above but descriptor is red from eeprom so different PID/VID
+3. eeprom with firstbyte: 0xC2
+SIE engine reads firmware from eeprom into ram, sets RENUM=1, 
+
+If 1 or 2:
+	firmware download is accepted by the SIE engine. 8051 remains in reset.
+Firmware download includes code and new descriptor tables to ram.
+
+Finally renumeration:
+8051 going out of reset will ReNumerate as the new device asto the downloaded software/descriptors.
+A configuration bit RENUM controls whether the SIE engine handles endpoint 0 requests or the
+8051 application code. (very handy!!)
+
+Endpoints:
+EP 0 (control), 1, 2 are only accecable by the 8051 cpu.
+
+EP 2,4,6,8 are high bandwidth direct connect outside to USB(SIE engine).
+EP2 is special as it allows double,trible,quad buffering by consuming space from the 4,6,8 endpoints.
+The total buffer memory is 4K.
+
+Endpoint configuration can select:
+- Direction: IN or OUT
+- Type: Bulk, Interrupt, Isochronous
+- Buffering: Double, Triple, Quad. this make transmitter and receiver independant.
+
+
+

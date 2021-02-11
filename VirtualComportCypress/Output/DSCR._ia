@@ -1,0 +1,1 @@
+"Source\DSCR.A51" SET (SMALL) DEBUG PRINT(.\Output\DSCR.lst) OBJECT(.\Output\DSCR.obj) EP

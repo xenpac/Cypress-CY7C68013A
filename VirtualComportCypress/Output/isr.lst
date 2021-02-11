@@ -1,0 +1,63 @@
+C51 COMPILER V7.07   ISR                                                                   01/21/2021 19:20:21 PAGE 1   
+
+
+C51 COMPILER V7.07, COMPILATION OF MODULE ISR
+OBJECT MODULE PLACED IN .\Output\isr.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE Source\isr.c BROWSE INCDIR(C:\Documents and Settings\prku\Desktop\UART Debu
+                    -g\) DEBUG OBJECTEXTEND PRINT(.\Output\isr.lst) OBJECT(.\Output\isr.obj)
+
+stmt level    source
+
+   1          #include <stdio.h>
+   2          #include "fx2.h"
+   3          #include "fx2regs.h"
+   4          #include "fx2sdly.h"
+   5          extern WriteByteS0();
+   6          extern  transmit();
+   7          xdata volatile unsigned char D2ON         _at_ 0x8800;
+   8          xdata volatile unsigned char D2OFF        _at_ 0x8000;
+   9          unsigned char dut;
+  10          static int w;
+  11          
+  12          
+  13          void ISR_USART0(void) interrupt 4
+  14            { 
+  15   1              if (RI)
+  16   1                      {  
+  17   2                              if((EP2468STAT & bmEP8EMPTY))   // check if EP8 is empty
+  18   2                                      {  
+  19   3                                               RI=0;
+  20   3                                               EP8FIFOBUF [0] = SBUF0;// copies received data to SBUF0
+  21   3                                               EP8BCH = 0;    
+  22   3                                       SYNCDELAY;   
+  23   3                                       EP8BCL = 1; 
+  24   3                                       SYNCDELAY;  
+  25   3                                           dut=D2ON;
+  26   3                                           w^=1;      
+  27   3                                               if (w)
+  28   3                                             {
+  29   4                                                 dut=D2OFF;
+  30   4                                                      } 
+  31   3                              }
+  32   2                      }
+  33   1                              if (TI)
+  34   1                                      {       
+  35   2                                              TI=0;
+  36   2                                              transmit();
+  37   2                              }
+  38   1         }
+  39           
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    117    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

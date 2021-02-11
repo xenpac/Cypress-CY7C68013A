@@ -1,0 +1,509 @@
+C51 COMPILER V7.07   VIRTUAL                                                               01/27/2021 11:51:16 PAGE 1   
+
+
+C51 COMPILER V7.07, COMPILATION OF MODULE VIRTUAL
+OBJECT MODULE PLACED IN .\Output\Virtual.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE Source\Virtual.c BROWSE INCDIR(C:\Documents and Settings\prku\Desktop\UART 
+                    -Debug\) DEBUG OBJECTEXTEND PRINT(.\Output\Virtual.lst) OBJECT(.\Output\Virtual.obj)
+
+stmt level    source
+
+   1          /*
+   2          This implements a virtual comport as cypress device.
+   3          CDC = USB Communication Device Class.
+   4          
+   5          In order to be considered a COM port, the USB device declares 2 interfaces:
+   6          •     Abstract Control Model Communication, with 1 Interrupt IN endpoint, we use EP1IN as int.
+   7          •     Abstract Control Model Data, with 1 Bulk IN and 1 Bulk OUT endpoint, we use EP1OUT and EP8IN as bulk
+             -.
+   8          
+   9          Data Interface( bulk or isochronous ):
+  10          EP1OUT = serial transmit (from PC).  See ISR_Ep1out(void) interrupt 0
+  11          EP8IN = serial receive (to PC)
+  12          
+  13          Communication Interface (setting baudrate parity...etc) for device management:
+  14          Linecoding and control signals are supported as dummy.
+  15          Linecontrols ar send to PC by interrupt EP1IN.
+  16          
+  17          RENUM = 0; The SIE engine handles all endpoint 0 controls
+  18          RENUM = 1; The firmware handles all endpoint 0 controls
+  19          
+  20          */
+  21          
+  22          
+  23          #pragma NOIV               // Do not generate interrupt vectors
+  24          #include "fx2.h"
+  25          #include "fx2regs.h"
+  26          #include "fx2sdly.h"                    // SYNCDELAY macro
+  27          
+  28          
+  29          // Macros: Bit operations on byte/word/long variables. Format: bset(Bit,variable). works also on SFRs(crea
+             -tes sbi,cbi)
+  30          #define bset(x,y) (y |= (1 << x))
+  31          #define bclr(x,y) (y &= (~(1 << x)))
+  32          #define btst(x,y) (y & (1 << x))
+  33          
+  34          extern BOOL   GotSUD;         // Received setup data flag
+  35          extern BOOL   Sleep;
+  36          extern BOOL   Rwuen;
+  37          extern BOOL   Selfpwr;
+  38          extern BYTE xdata LineCode[7] ; // the serial setup data, we dont use it
+  39          int RxCount,RxIndex;  // RxIndex=ep1out index; RxCount = total received bytes in ep1out. receive counters
+  40          char sbuf[32];
+  41          
+  42          
+  43          //protos:
+  44          unsigned char receive(void);
+  45          void transmit(unsigned char c);
+  46          void putcc(unsigned char c);
+  47          unsigned char getcc(void);
+  48          void getss(unsigned char *buf);
+  49          void putss(const unsigned char *ps);
+  50          void mainmenue(void);
+  51          
+  52          
+C51 COMPILER V7.07   VIRTUAL                                                               01/27/2021 11:51:16 PAGE 2   
+
+  53          void putcc(unsigned char c)
+  54          {
+  55   1        transmit(c); 
+  56   1      }
+  57          
+  58          unsigned char getcc(void)
+  59          {
+  60   1          unsigned char c;
+  61   1              c=receive();
+  62   1              if (c != 0xff)  putcc(c);
+  63   1          return c;
+  64   1      }
+  65          
+  66          void getss(unsigned char *buf)
+  67          {
+  68   1          unsigned char *ps, c;
+  69   1          ps=buf;
+  70   1          while (1)
+  71   1          {
+  72   2              c=getcc();
+  73   2              if (( c == 0x0d)||(c==0x0a)) // CR LF
+  74   2                  break;
+  75   2              *ps++=c;
+  76   2          }
+  77   1          *ps=0;
+  78   1          putcc(0x0d);
+  79   1          putcc(0x0a);
+  80   1      }
+  81          
+  82          void putss(const unsigned char *ps)
+  83          {
+  84   1          while (*ps)
+  85   1          {
+  86   2              putcc(*ps++);
+  87   2          }
+  88   1      }
+  89          
+  90          
+  91          const char *menue="\n***Menue***\n"
+  92                            "l-list state\n"
+  93                            "c-clock1\n"
+  94                            "s-start i2s\n"
+  95                            "x-stop i2s\n"
+  96                            "i-set inport\n"
+  97                            ;
+  98          const char *prompt="\nfx2:>";
+  99          
+ 100          /*
+ 101          called repeatedly in the main loop
+ 102          if a char is received, process it.
+ 103          this is a one char menue!
+ 104          */
+ 105          void mainmenue(void)
+ 106          {
+ 107   1      unsigned char c;
+ 108   1      
+ 109   1      
+ 110   1              c = getcc();
+ 111   1          if ( c != 0xff) // if char was received
+ 112   1              {
+ 113   2              switch(c)
+ 114   2              {
+C51 COMPILER V7.07   VIRTUAL                                                               01/27/2021 11:51:16 PAGE 3   
+
+ 115   3              case 'l': //list
+ 116   3                  putss("hello");
+ 117   3                  break;
+ 118   3      
+ 119   3      
+ 120   3              default:
+ 121   3                  putss(menue);
+ 122   3              }
+ 123   2              putss(prompt);
+ 124   2              }
+ 125   1      
+ 126   1      }
+ 127          
+ 128          /* get one byte from host
+ 129          data is in fifo, (0-64) bytes
+ 130          this routine expects that EP1OUT data has arrived in the EP1 interrupt and RxIndex and RxCount are set cor
+             -rectly.
+ 131          Here we just read the next byte from EP1OUT fifo.
+ 132          exit:
+ 133          char received
+ 134          0xff = nothing received
+ 135          we do not wait
+ 136          */
+ 137          unsigned char receive(void)
+ 138          {
+ 139   1          unsigned char c;
+ 140   1              
+ 141   1          if (!(EP1OUTCS & 0x02)) // if EP is not busy. ie. BUSY =  SIE NOT ‘owns’ the buffer,
+ 142   1          {
+ 143   2      
+ 144   2              if(RxIndex<RxCount) // if there are bytes available in fifo
+ 145   2              {
+ 146   3              bclr(0,IOA);
+ 147   3      
+ 148   3                  c=EP1OUTBUF[RxIndex]; // get it
+ 149   3                  RxIndex++; //advance ep1out fifo index
+ 150   3                              
+ 151   3                  return c;
+ 152   3              }
+ 153   2              else // nobytes left, return it for new data to arrive
+ 154   2              {
+ 155   3              bset(0,IOA);
+ 156   3                  EP1OUTBC = 0x04;// Arms EP1 endpoint. write any value to bytecount register to give back the f
+             -ifo to SIE.
+ 157   3              }
+ 158   2          }
+ 159   1                  return 0xff;
+ 160   1      }
+ 161          
+ 162          // send data to host on EP8IN
+ 163          void transmit(unsigned char c)
+ 164          {
+ 165   1      //      bclr(0,IOA);
+ 166   1              while (!(EP2468STAT & bmEP8EMPTY)); // check if EP8 is empty 
+ 167   1          {
+ 168   2              EP8FIFOBUF [0] = c;
+ 169   2              EP8BCH = 0;    // endpoint bytecount H
+ 170   2              SYNCDELAY;
+ 171   2              EP8BCL = 1;  // endpoint bytecount L. this should ready the EP8 for the host to fetch.  This commi
+             -ts the EP for transfer.
+ 172   2              SYNCDELAY;
+ 173   2          }
+C51 COMPILER V7.07   VIRTUAL                                                               01/27/2021 11:51:16 PAGE 4   
+
+ 174   1      //      bset(0,IOA);
+ 175   1      
+ 176   1      }
+ 177          
+ 178          
+ 179          // Called repeatedly while the device is idle
+ 180          void TD_Poll(void)
+ 181          {
+ 182   1          unsigned char c;
+ 183   1          // Serial State Notification that has to be sent periodically to the host
+ 184   1      
+ 185   1          if (!(EP1INCS & 0x02))      // check if EP1IN is available
+ 186   1          {
+ 187   2              EP1INBUF[0] = 0x0A;       // if it is available, then fill the first 10 bytes of the buffer with
+ 188   2              EP1INBUF[1] = 0x20;       // appropriate data.
+ 189   2              EP1INBUF[2] = 0x00;
+ 190   2              EP1INBUF[3] = 0x00;
+ 191   2              EP1INBUF[4] = 0x00;
+ 192   2              EP1INBUF[5] = 0x00;
+ 193   2              EP1INBUF[6] = 0x00;
+ 194   2              EP1INBUF[7] = 0x02;
+ 195   2              EP1INBUF[8] = 0x00;
+ 196   2              EP1INBUF[9] = 0x00;
+ 197   2              EP1INBC = 10;            // manually commit once the buffer is filled
+ 198   2          }
+ 199   1      
+ 200   1      mainmenue();
+ 201   1      
+ 202   1      /* echo all chars
+ 203   1              c=receive();
+ 204   1      
+ 205   1                      if (c)
+ 206   1              transmit(c);
+ 207   1      */    
+ 208   1      
+ 209   1      }
+*** WARNING C280 IN LINE 182 OF SOURCE\VIRTUAL.C: 'c': unreferenced local variable
+ 210          
+ 211          
+ 212          
+ 213          // Called once at startup
+ 214          void DevInit(void)
+ 215          {
+ 216   1      
+ 217   1        // enable leds
+ 218   1        OEA=0x03;
+ 219   1        IOA=0x03; //off
+ 220   1      
+ 221   1      // set the CPU clock to 48MHz
+ 222   1          CPUCS = ((CPUCS & ~bmCLKSPD) | bmCLKSPD1) ;
+ 223   1      
+ 224   1          // set the slave FIFO interface to 48MHz
+ 225   1          IFCONFIG |= 0x40;
+ 226   1          SYNCDELAY;
+ 227   1          REVCTL = 0x03;
+ 228   1          SYNCDELAY;
+ 229   1      
+ 230   1      
+ 231   1      
+ 232   1          FIFORESET = 0x80; // activate NAK-ALL to avoid race conditions
+ 233   1          SYNCDELAY;       // see TRM section 15.14
+ 234   1          FIFORESET = 0x08; // reset, FIFO 8
+C51 COMPILER V7.07   VIRTUAL                                                               01/27/2021 11:51:16 PAGE 5   
+
+ 235   1          SYNCDELAY; //
+ 236   1          FIFORESET = 0x00; // deactivate NAK-ALL
+ 237   1          SYNCDELAY;
+ 238   1      
+ 239   1      
+ 240   1          EP1OUTCFG = 0xA0;    // Configure EP1OUT as BULK EP
+ 241   1          SYNCDELAY;
+ 242   1          EP1INCFG = 0xB0;     // Configure EP1IN as BULK IN EP
+ 243   1          SYNCDELAY;                    // see TRM section 15.14
+ 244   1          EP2CFG = 0x7F;       // Invalid EP
+ 245   1          SYNCDELAY;
+ 246   1          EP4CFG = 0x7F;      // Invalid EP
+ 247   1          SYNCDELAY;
+ 248   1          EP6CFG = 0x7F;      // Invalid EP
+ 249   1          SYNCDELAY;
+ 250   1      
+ 251   1      
+ 252   1      
+ 253   1      
+ 254   1          EP8CFG = 0xE0;      // Configure EP8 as BULK IN EP
+ 255   1          SYNCDELAY;
+ 256   1      
+ 257   1          EP8FIFOCFG = 0x00;  // Configure EP8 FIFO in 8-bit Manual Commit mode
+ 258   1          SYNCDELAY;
+ 259   1          T2CON  = 0x34;
+ 260   1      
+ 261   1      
+ 262   1          EPIE |= bmBIT3 ;              // Enable EP1 OUT Endpoint interrupts to receive chars
+ 263   1      
+ 264   1          AUTOPTRSETUP |= 0x01;         // enable dual autopointer feature
+ 265   1          Rwuen = TRUE;                 // Enable remote-wakeup
+ 266   1          EP1OUTBC = 0x04;
+ 267   1      
+ 268   1      
+ 269   1      
+ 270   1      
+ 271   1      }
+ 272          
+ 273          
+ 274          
+ 275          //-----------------------------------------------------------------------------
+ 276          // USB Interrupt Handlers
+ 277          //   The following functions are called by the USB interrupt jump table.
+ 278          //-----------------------------------------------------------------------------
+ 279          
+ 280          // host sent data on EP1OUT
+ 281          void ISR_Ep1out(void) interrupt 0
+ 282          {
+ 283   1          EZUSB_IRQ_CLEAR();          //Clears the USB interrupt
+ 284   1          EPIRQ = bmBIT3;                     //Clears EP1 OUT interrupt request
+ 285   1      
+ 286   1          RxIndex=0; // set index to 0
+ 287   1          RxCount=EP1OUTBC; // amount of received bytes
+ 288   1      
+ 289   1      }
+ 290          
+ 291          void ISR_Sudav(void) interrupt 0
+ 292          {
+ 293   1      
+ 294   1          GotSUD = TRUE;            // Set flag
+ 295   1          EZUSB_IRQ_CLEAR();
+ 296   1          USBIRQ = bmSUDAV;         // Clear SUDAV IRQ
+C51 COMPILER V7.07   VIRTUAL                                                               01/27/2021 11:51:16 PAGE 6   
+
+ 297   1      }
+ 298          
+ 299          // Setup Token Interrupt Handler
+ 300          void ISR_Sutok(void) interrupt 0
+ 301          {
+ 302   1          EZUSB_IRQ_CLEAR();
+ 303   1          USBIRQ = bmSUTOK;         // Clear SUTOK IRQ
+ 304   1      }
+ 305          
+ 306          void ISR_Sof(void) interrupt 0
+ 307          {
+ 308   1          EZUSB_IRQ_CLEAR();
+ 309   1          USBIRQ = bmSOF;            // Clear SOF IRQ
+ 310   1      }
+ 311          
+ 312          void ISR_Ures(void) interrupt 0
+ 313          {
+ 314   1          if (EZUSB_HIGHSPEED())
+ 315   1          {
+ 316   2              pConfigDscr = pHighSpeedConfigDscr;
+ 317   2              pOtherConfigDscr = pFullSpeedConfigDscr;
+ 318   2          }
+ 319   1          else
+ 320   1          {
+ 321   2              pConfigDscr = pFullSpeedConfigDscr;
+ 322   2              pOtherConfigDscr = pHighSpeedConfigDscr;
+ 323   2          }
+ 324   1      
+ 325   1          EZUSB_IRQ_CLEAR();
+ 326   1          USBIRQ = bmURES;         // Clear URES IRQ
+ 327   1      }
+ 328          
+ 329          void ISR_Susp(void) interrupt 0
+ 330          {
+ 331   1          Sleep = TRUE;
+ 332   1          EZUSB_IRQ_CLEAR();
+ 333   1          USBIRQ = bmSUSP;
+ 334   1      
+ 335   1      }
+ 336          
+ 337          void ISR_Highspeed(void) interrupt 0
+ 338          {
+ 339   1          if (EZUSB_HIGHSPEED())
+ 340   1          {
+ 341   2              pConfigDscr = pHighSpeedConfigDscr;
+ 342   2              pOtherConfigDscr = pFullSpeedConfigDscr;
+ 343   2          }
+ 344   1          else
+ 345   1          {
+ 346   2              pConfigDscr = pFullSpeedConfigDscr;
+ 347   2              pOtherConfigDscr = pHighSpeedConfigDscr;
+ 348   2          }
+ 349   1      
+ 350   1          EZUSB_IRQ_CLEAR();
+ 351   1          USBIRQ = bmHSGRANT;
+ 352   1      }
+ 353          
+ 354          
+ 355          
+ 356          
+ 357          void ISR_Ep0ack(void) interrupt 0
+ 358          {
+C51 COMPILER V7.07   VIRTUAL                                                               01/27/2021 11:51:16 PAGE 7   
+
+ 359   1      }
+ 360          void ISR_Stub(void) interrupt 0
+ 361          {
+ 362   1      }
+ 363          void ISR_Ep0in(void) interrupt 0
+ 364          {
+ 365   1      }
+ 366          void ISR_Ep0out(void) interrupt 0
+ 367          {
+ 368   1      
+ 369   1      
+ 370   1      }
+ 371          void ISR_Ep1in(void) interrupt 0
+ 372          {
+ 373   1      }
+ 374          
+ 375          void ISR_Ep2inout(void) interrupt 0
+ 376          {
+ 377   1      }
+ 378          void ISR_Ep4inout(void) interrupt 0
+ 379          {
+ 380   1      
+ 381   1      }
+ 382          void ISR_Ep6inout(void) interrupt 0
+ 383          {
+ 384   1      }
+ 385          void ISR_Ep8inout(void) interrupt 0
+ 386          {
+ 387   1      }
+ 388          void ISR_Ibn(void) interrupt 0
+ 389          {
+ 390   1      }
+ 391          void ISR_Ep0pingnak(void) interrupt 0
+ 392          {
+ 393   1      }
+ 394          void ISR_Ep1pingnak(void) interrupt 0
+ 395          {
+ 396   1      }
+ 397          void ISR_Ep2pingnak(void) interrupt 0
+ 398          {
+ 399   1      }
+ 400          void ISR_Ep4pingnak(void) interrupt 0
+ 401          {
+ 402   1      }
+ 403          void ISR_Ep6pingnak(void) interrupt 0
+ 404          {
+ 405   1      }
+ 406          void ISR_Ep8pingnak(void) interrupt 0
+ 407          {
+ 408   1      }
+ 409          void ISR_Errorlimit(void) interrupt 0
+ 410          {
+ 411   1      }
+ 412          void ISR_Ep2piderror(void) interrupt 0
+ 413          {
+ 414   1      }
+ 415          void ISR_Ep4piderror(void) interrupt 0
+ 416          {
+ 417   1      }
+ 418          void ISR_Ep6piderror(void) interrupt 0
+ 419          {
+ 420   1      }
+C51 COMPILER V7.07   VIRTUAL                                                               01/27/2021 11:51:16 PAGE 8   
+
+ 421          void ISR_Ep8piderror(void) interrupt 0
+ 422          {
+ 423   1      }
+ 424          void ISR_Ep2pflag(void) interrupt 0
+ 425          {
+ 426   1      }
+ 427          void ISR_Ep4pflag(void) interrupt 0
+ 428          {
+ 429   1      }
+ 430          void ISR_Ep6pflag(void) interrupt 0
+ 431          {
+ 432   1      }
+ 433          void ISR_Ep8pflag(void) interrupt 0
+ 434          {
+ 435   1      }
+ 436          void ISR_Ep2eflag(void) interrupt 0
+ 437          {
+ 438   1      }
+ 439          void ISR_Ep4eflag(void) interrupt 0
+ 440          {
+ 441   1      }
+ 442          void ISR_Ep6eflag(void) interrupt 0
+ 443          {
+ 444   1      }
+ 445          void ISR_Ep8eflag(void) interrupt 0
+ 446          {
+ 447   1      }
+ 448          void ISR_Ep2fflag(void) interrupt 0
+ 449          {
+ 450   1      }
+ 451          void ISR_Ep4fflag(void) interrupt 0
+ 452          {
+ 453   1      }
+ 454          void ISR_Ep6fflag(void) interrupt 0
+ 455          {
+ 456   1      }
+ 457          void ISR_Ep8fflag(void) interrupt 0
+ 458          {
+ 459   1      }
+ 460          void ISR_GpifComplete(void) interrupt 0
+ 461          {
+ 462   1      }
+ 463          void ISR_GpifWaveform(void) interrupt 0
+ 464          {
+ 465   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    696    ----
+   CONSTANT SIZE    =     85    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     42       8
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

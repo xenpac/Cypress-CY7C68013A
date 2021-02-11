@@ -1,0 +1,493 @@
+BL51 BANKED LINKER/LOCATER V5.03                                                        01/27/2021  11:51:16  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V5.03, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE .\Output\fw.obj, .\Output\Virtual.obj, .\Source\USBJmpTb.OBJ, .\Source\EZUSB.LIB, .\Output\DSCR
+>> .obj TO .\Output\VirtualCom PRINT (.\Output\VirtualCom.m51) NOLINES, NOSYMBOLS, NOPUBLICS RAMSIZE (256) CODE (0X80) X
+>> DATA (0X1000)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Output\fw.obj (FW)
+  .\Output\Virtual.obj (VIRTUAL)
+  .\Source\USBJmpTb.OBJ (USBJMPTBL)
+  .\Source\EZUSB.LIB (RESUME)
+  .\Source\EZUSB.LIB (DISCON)
+  .\Source\EZUSB.LIB (EZREGS)
+  .\Source\EZUSB.LIB (GET_STRD)
+  .\Source\EZUSB.LIB (SUSP)
+  .\Source\EZUSB.LIB (DELAY)
+  .\Source\EZUSB.LIB (DELAY1MS)
+  .\Output\DSCR.obj (DSCR)
+  C:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL\C51\LIB\C51S.LIB (?C?CLDPTR)
+  C:\KEIL\C51\LIB\C51S.LIB (?C?CSTPTR)
+  C:\KEIL\C51\LIB\C51S.LIB (?C?ULCMP)
+  C:\KEIL\C51\LIB\C51S.LIB (?C?CCASE)
+  C:\KEIL\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Output\VirtualCom (FW)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0014H     UNIT         _DATA_GROUP_
+            DATA    001CH     0003H     UNIT         ?DT?_GETSS?VIRTUAL
+                    001FH     0001H                  *** GAP ***
+            BIT     0020H.0   0000H.4   UNIT         ?BI?FW
+            BIT     0020H.4   0000H.1   UNIT         _BIT_GROUP_
+                    0020H.5   0000H.3                *** GAP ***
+            DATA    0021H     002AH     UNIT         ?DT?VIRTUAL
+            DATA    004BH     0013H     UNIT         ?DT?FW
+            IDATA   005EH     0001H     UNIT         ?STACK
+
+            * * * * * * *  X D A T A   M E M O R Y  * * * * * * *
+                    0000H     1000H                  *** GAP ***
+            XDATA   1000H     0007H     UNIT         ?XD?FW
+                    1007H     D3F9H                  *** GAP ***
+            XDATA   E400H     0001H     ABSOLUTE     
+                    E401H     007FH                  *** GAP ***
+            XDATA   E480H     0001H     ABSOLUTE     
+                    E481H     008CH                  *** GAP ***
+            XDATA   E50DH     0001H     ABSOLUTE     
+                    E50EH     00F2H                  *** GAP ***
+            XDATA   E600H     0001H     ABSOLUTE     
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/27/2021  11:51:16  PAGE 2
+
+
+            XDATA   E601H     0001H     ABSOLUTE     
+            XDATA   E602H     0001H     ABSOLUTE     
+            XDATA   E603H     0001H     ABSOLUTE     
+            XDATA   E604H     0001H     ABSOLUTE     
+            XDATA   E605H     0001H     ABSOLUTE     
+            XDATA   E606H     0001H     ABSOLUTE     
+            XDATA   E607H     0001H     ABSOLUTE     
+            XDATA   E608H     0001H     ABSOLUTE     
+            XDATA   E609H     0001H     ABSOLUTE     
+            XDATA   E60AH     0001H     ABSOLUTE     
+            XDATA   E60BH     0001H     ABSOLUTE     
+            XDATA   E60CH     0001H     ABSOLUTE     
+                    E60DH     0003H                  *** GAP ***
+            XDATA   E610H     0001H     ABSOLUTE     
+            XDATA   E611H     0001H     ABSOLUTE     
+            XDATA   E612H     0001H     ABSOLUTE     
+            XDATA   E613H     0001H     ABSOLUTE     
+            XDATA   E614H     0001H     ABSOLUTE     
+            XDATA   E615H     0001H     ABSOLUTE     
+                    E616H     0002H                  *** GAP ***
+            XDATA   E618H     0001H     ABSOLUTE     
+            XDATA   E619H     0001H     ABSOLUTE     
+            XDATA   E61AH     0001H     ABSOLUTE     
+            XDATA   E61BH     0001H     ABSOLUTE     
+                    E61CH     0004H                  *** GAP ***
+            XDATA   E620H     0001H     ABSOLUTE     
+            XDATA   E621H     0001H     ABSOLUTE     
+            XDATA   E622H     0001H     ABSOLUTE     
+            XDATA   E623H     0001H     ABSOLUTE     
+            XDATA   E624H     0001H     ABSOLUTE     
+            XDATA   E625H     0001H     ABSOLUTE     
+            XDATA   E626H     0001H     ABSOLUTE     
+            XDATA   E627H     0001H     ABSOLUTE     
+            XDATA   E628H     0001H     ABSOLUTE     
+            XDATA   E629H     0001H     ABSOLUTE     
+            XDATA   E62AH     0001H     ABSOLUTE     
+            XDATA   E62BH     0001H     ABSOLUTE     
+            XDATA   E62CH     0001H     ABSOLUTE     
+            XDATA   E62DH     0001H     ABSOLUTE     
+            XDATA   E62EH     0001H     ABSOLUTE     
+            XDATA   E62FH     0001H     ABSOLUTE     
+            XDATA   E630H     0001H     ABSOLUTE     
+            XDATA   E631H     0001H     ABSOLUTE     
+            XDATA   E632H     0001H     ABSOLUTE     
+            XDATA   E633H     0001H     ABSOLUTE     
+            XDATA   E634H     0001H     ABSOLUTE     
+            XDATA   E635H     0001H     ABSOLUTE     
+            XDATA   E636H     0001H     ABSOLUTE     
+            XDATA   E637H     0001H     ABSOLUTE     
+                    E638H     0008H                  *** GAP ***
+            XDATA   E640H     0001H     ABSOLUTE     
+            XDATA   E641H     0001H     ABSOLUTE     
+            XDATA   E642H     0001H     ABSOLUTE     
+            XDATA   E643H     0001H     ABSOLUTE     
+                    E644H     0004H                  *** GAP ***
+            XDATA   E648H     0001H     ABSOLUTE     
+            XDATA   E649H     0001H     ABSOLUTE     
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/27/2021  11:51:16  PAGE 3
+
+
+                    E64AH     0006H                  *** GAP ***
+            XDATA   E650H     0001H     ABSOLUTE     
+            XDATA   E651H     0001H     ABSOLUTE     
+            XDATA   E652H     0001H     ABSOLUTE     
+            XDATA   E653H     0001H     ABSOLUTE     
+            XDATA   E654H     0001H     ABSOLUTE     
+            XDATA   E655H     0001H     ABSOLUTE     
+            XDATA   E656H     0001H     ABSOLUTE     
+            XDATA   E657H     0001H     ABSOLUTE     
+            XDATA   E658H     0001H     ABSOLUTE     
+            XDATA   E659H     0001H     ABSOLUTE     
+            XDATA   E65AH     0001H     ABSOLUTE     
+            XDATA   E65BH     0001H     ABSOLUTE     
+            XDATA   E65CH     0001H     ABSOLUTE     
+            XDATA   E65DH     0001H     ABSOLUTE     
+            XDATA   E65EH     0001H     ABSOLUTE     
+            XDATA   E65FH     0001H     ABSOLUTE     
+            XDATA   E660H     0001H     ABSOLUTE     
+            XDATA   E661H     0001H     ABSOLUTE     
+            XDATA   E662H     0001H     ABSOLUTE     
+            XDATA   E663H     0001H     ABSOLUTE     
+            XDATA   E664H     0001H     ABSOLUTE     
+            XDATA   E665H     0001H     ABSOLUTE     
+            XDATA   E666H     0001H     ABSOLUTE     
+            XDATA   E667H     0001H     ABSOLUTE     
+            XDATA   E668H     0001H     ABSOLUTE     
+                    E669H     0007H                  *** GAP ***
+            XDATA   E670H     0001H     ABSOLUTE     
+            XDATA   E671H     0001H     ABSOLUTE     
+            XDATA   E672H     0001H     ABSOLUTE     
+                    E673H     0005H                  *** GAP ***
+            XDATA   E678H     0001H     ABSOLUTE     
+            XDATA   E679H     0001H     ABSOLUTE     
+            XDATA   E67AH     0001H     ABSOLUTE     
+            XDATA   E67BH     0001H     ABSOLUTE     
+            XDATA   E67CH     0001H     ABSOLUTE     
+            XDATA   E67DH     0001H     ABSOLUTE     
+            XDATA   E67EH     0001H     ABSOLUTE     
+            XDATA   E67FH     0001H     ABSOLUTE     
+            XDATA   E680H     0001H     ABSOLUTE     
+            XDATA   E681H     0001H     ABSOLUTE     
+            XDATA   E682H     0001H     ABSOLUTE     
+            XDATA   E683H     0001H     ABSOLUTE     
+            XDATA   E684H     0001H     ABSOLUTE     
+            XDATA   E685H     0001H     ABSOLUTE     
+            XDATA   E686H     0001H     ABSOLUTE     
+            XDATA   E687H     0001H     ABSOLUTE     
+                    E688H     0002H                  *** GAP ***
+            XDATA   E68AH     0001H     ABSOLUTE     
+            XDATA   E68BH     0001H     ABSOLUTE     
+                    E68CH     0001H                  *** GAP ***
+            XDATA   E68DH     0001H     ABSOLUTE     
+                    E68EH     0001H                  *** GAP ***
+            XDATA   E68FH     0001H     ABSOLUTE     
+            XDATA   E690H     0001H     ABSOLUTE     
+            XDATA   E691H     0001H     ABSOLUTE     
+                    E692H     0002H                  *** GAP ***
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/27/2021  11:51:16  PAGE 4
+
+
+            XDATA   E694H     0001H     ABSOLUTE     
+            XDATA   E695H     0001H     ABSOLUTE     
+                    E696H     0002H                  *** GAP ***
+            XDATA   E698H     0001H     ABSOLUTE     
+            XDATA   E699H     0001H     ABSOLUTE     
+                    E69AH     0002H                  *** GAP ***
+            XDATA   E69CH     0001H     ABSOLUTE     
+            XDATA   E69DH     0001H     ABSOLUTE     
+                    E69EH     0002H                  *** GAP ***
+            XDATA   E6A0H     0001H     ABSOLUTE     
+            XDATA   E6A1H     0001H     ABSOLUTE     
+            XDATA   E6A2H     0001H     ABSOLUTE     
+            XDATA   E6A3H     0001H     ABSOLUTE     
+            XDATA   E6A4H     0001H     ABSOLUTE     
+            XDATA   E6A5H     0001H     ABSOLUTE     
+            XDATA   E6A6H     0001H     ABSOLUTE     
+            XDATA   E6A7H     0001H     ABSOLUTE     
+            XDATA   E6A8H     0001H     ABSOLUTE     
+            XDATA   E6A9H     0001H     ABSOLUTE     
+            XDATA   E6AAH     0001H     ABSOLUTE     
+            XDATA   E6ABH     0001H     ABSOLUTE     
+            XDATA   E6ACH     0001H     ABSOLUTE     
+            XDATA   E6ADH     0001H     ABSOLUTE     
+            XDATA   E6AEH     0001H     ABSOLUTE     
+            XDATA   E6AFH     0001H     ABSOLUTE     
+            XDATA   E6B0H     0001H     ABSOLUTE     
+            XDATA   E6B1H     0001H     ABSOLUTE     
+            XDATA   E6B2H     0001H     ABSOLUTE     
+            XDATA   E6B3H     0001H     ABSOLUTE     
+            XDATA   E6B4H     0001H     ABSOLUTE     
+            XDATA   E6B5H     0001H     ABSOLUTE     
+                    E6B6H     0002H                  *** GAP ***
+            XDATA   E6B8H     0008H     ABSOLUTE     
+            XDATA   E6C0H     0001H     ABSOLUTE     
+            XDATA   E6C1H     0001H     ABSOLUTE     
+            XDATA   E6C2H     0001H     ABSOLUTE     
+            XDATA   E6C3H     0001H     ABSOLUTE     
+            XDATA   E6C4H     0001H     ABSOLUTE     
+            XDATA   E6C5H     0001H     ABSOLUTE     
+            XDATA   E6C6H     0001H     ABSOLUTE     
+            XDATA   E6C7H     0001H     ABSOLUTE     
+            XDATA   E6C8H     0001H     ABSOLUTE     
+            XDATA   E6C9H     0001H     ABSOLUTE     
+            XDATA   E6CAH     0001H     ABSOLUTE     
+            XDATA   E6CBH     0001H     ABSOLUTE     
+            XDATA   E6CCH     0001H     ABSOLUTE     
+            XDATA   E6CDH     0001H     ABSOLUTE     
+            XDATA   E6CEH     0001H     ABSOLUTE     
+            XDATA   E6CFH     0001H     ABSOLUTE     
+            XDATA   E6D0H     0001H     ABSOLUTE     
+            XDATA   E6D1H     0001H     ABSOLUTE     
+            XDATA   E6D2H     0001H     ABSOLUTE     
+            XDATA   E6D3H     0001H     ABSOLUTE     
+            XDATA   E6D4H     0001H     ABSOLUTE     
+                    E6D5H     0005H                  *** GAP ***
+            XDATA   E6DAH     0001H     ABSOLUTE     
+            XDATA   E6DBH     0001H     ABSOLUTE     
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/27/2021  11:51:16  PAGE 5
+
+
+            XDATA   E6DCH     0001H     ABSOLUTE     
+                    E6DDH     0005H                  *** GAP ***
+            XDATA   E6E2H     0001H     ABSOLUTE     
+            XDATA   E6E3H     0001H     ABSOLUTE     
+            XDATA   E6E4H     0001H     ABSOLUTE     
+                    E6E5H     0005H                  *** GAP ***
+            XDATA   E6EAH     0001H     ABSOLUTE     
+            XDATA   E6EBH     0001H     ABSOLUTE     
+            XDATA   E6ECH     0001H     ABSOLUTE     
+                    E6EDH     0003H                  *** GAP ***
+            XDATA   E6F0H     0001H     ABSOLUTE     
+            XDATA   E6F1H     0001H     ABSOLUTE     
+            XDATA   E6F2H     0001H     ABSOLUTE     
+            XDATA   E6F3H     0001H     ABSOLUTE     
+            XDATA   E6F4H     0001H     ABSOLUTE     
+            XDATA   E6F5H     0001H     ABSOLUTE     
+                    E6F6H     0002H                  *** GAP ***
+            XDATA   E6F8H     0001H     ABSOLUTE     
+            XDATA   E6F9H     0001H     ABSOLUTE     
+            XDATA   E6FAH     0001H     ABSOLUTE     
+            XDATA   E6FBH     0001H     ABSOLUTE     
+            XDATA   E6FCH     0001H     ABSOLUTE     
+            XDATA   E6FDH     0001H     ABSOLUTE     
+            XDATA   E6FEH     0001H     ABSOLUTE     
+                    E6FFH     0041H                  *** GAP ***
+            XDATA   E740H     0040H     ABSOLUTE     
+            XDATA   E780H     0040H     ABSOLUTE     
+            XDATA   E7C0H     0040H     ABSOLUTE     
+                    E800H     0800H                  *** GAP ***
+            XDATA   F000H     0400H     ABSOLUTE     
+            XDATA   F400H     0400H     ABSOLUTE     
+            XDATA   F800H     0400H     ABSOLUTE     
+            XDATA   FC00H     0400H     ABSOLUTE     
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     0030H                  *** GAP ***
+            CODE    0033H     0003H     ABSOLUTE     
+                    0036H     000DH                  *** GAP ***
+            CODE    0043H     0003H     ABSOLUTE     
+                    0046H     000DH                  *** GAP ***
+            CODE    0053H     0003H     ABSOLUTE     
+                    0056H     002AH                  *** GAP ***
+            CODE    0080H     020AH     UNIT         ?PR?SETUPCOMMAND?FW
+            CODE    028AH     01C3H     UNIT         ?PR?MAIN?FW
+            CODE    044DH     008CH     UNIT         ?C_C51STARTUP
+            CODE    04D9H     0027H     UNIT         ?PR?MAINMENUE?VIRTUAL
+            CODE    0500H     00F0H     PAGE         DSCR
+            CODE    05F0H     0010H     UNIT         ?PR?GETCC?VIRTUAL
+            CODE    0600H     00B8H     PAGE         ?PR?USB_JUMP_TABLE?USBJT
+            CODE    06B8H     0086H     UNIT         ?PR?DEVINIT?VIRTUAL
+            CODE    073EH     0062H     UNIT         ?C?LIB_CODE
+            CODE    07A0H     0055H     UNIT         ?CO?VIRTUAL
+            CODE    07F5H     0046H     UNIT         ?PR?_EZUSB_DELAY?DELAY
+            CODE    083BH     003DH     UNIT         ?PR?RECEIVE?VIRTUAL
+            CODE    0878H     003BH     UNIT         ?PR?_GETSS?VIRTUAL
+            CODE    08B3H     0037H     UNIT         ?PR?ISR_URES?VIRTUAL
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/27/2021  11:51:16  PAGE 6
+
+
+            CODE    08EAH     0037H     UNIT         ?PR?ISR_HIGHSPEED?VIRTUAL
+            CODE    0921H     002FH     UNIT         ?PR?EZUSB_DISCON?DISCON
+            CODE    0950H     002EH     UNIT         ?PR?TD_POLL?VIRTUAL
+            CODE    097EH     002CH     UNIT         ?PR?EZUSB_RESUME?RESUME
+            CODE    09AAH     002BH     UNIT         ?PR?_EZUSB_GETSTRINGDSCR?GET_STRD
+            CODE    09D5H     0025H     UNIT         ?PR?_PUTSS?VIRTUAL
+            CODE    09FAH     0025H     UNIT         ?PR?ISR_EP1OUT?VIRTUAL
+            CODE    0A1FH     0025H     UNIT         EZUSB
+            CODE    0A44H     001BH     UNIT         ?PR?_TRANSMIT?VIRTUAL
+            CODE    0A5FH     0018H     UNIT         ?PR?ISR_SUDAV?VIRTUAL
+            CODE    0A77H     0018H     UNIT         ?PR?ISR_SUSP?VIRTUAL
+            CODE    0A8FH     0016H     UNIT         ?PR?ISR_SUTOK?VIRTUAL
+            CODE    0AA5H     0016H     UNIT         ?PR?ISR_SOF?VIRTUAL
+            CODE    0ABBH     0015H     UNIT         ?C_INITSEG
+            CODE    0AD0H     0012H     UNIT         ?PR?DR_GETCONFIGURATION?FW
+            CODE    0AE2H     0012H     UNIT         ?PR?DR_GETINTERFACE?FW
+            CODE    0AF4H     0008H     UNIT         ?PR?DR_SETCONFIGURATION?FW
+            CODE    0AFCH     0008H     UNIT         ?PR?DR_SETINTERFACE?FW
+            CODE    0B04H     0004H     UNIT         ?PR?RESUME_ISR?FW
+            CODE    0B08H     0003H     UNIT         ?PR?_PUTCC?VIRTUAL
+            CODE    0B0BH     0002H     UNIT         ?PR?TD_SUSPEND?FW
+            CODE    0B0DH     0002H     UNIT         ?PR?TD_RESUME?FW
+            CODE    0B0FH     0002H     UNIT         ?PR?DR_GETDESCRIPTOR?FW
+            CODE    0B11H     0002H     UNIT         ?PR?DR_GETSTATUS?FW
+            CODE    0B13H     0002H     UNIT         ?PR?DR_CLEARFEATURE?FW
+            CODE    0B15H     0002H     UNIT         ?PR?DR_SETFEATURE?FW
+            CODE    0B17H     0002H     UNIT         ?PR?DR_VENDORCMND?FW
+            CODE    0B19H     0001H     UNIT         ?PR?ISR_EP0ACK?VIRTUAL
+            CODE    0B1AH     0001H     UNIT         ?PR?ISR_STUB?VIRTUAL
+            CODE    0B1BH     0001H     UNIT         ?PR?ISR_EP0IN?VIRTUAL
+            CODE    0B1CH     0001H     UNIT         ?PR?ISR_EP0OUT?VIRTUAL
+            CODE    0B1DH     0001H     UNIT         ?PR?ISR_EP1IN?VIRTUAL
+            CODE    0B1EH     0001H     UNIT         ?PR?ISR_EP2INOUT?VIRTUAL
+            CODE    0B1FH     0001H     UNIT         ?PR?ISR_EP4INOUT?VIRTUAL
+            CODE    0B20H     0001H     UNIT         ?PR?ISR_EP6INOUT?VIRTUAL
+            CODE    0B21H     0001H     UNIT         ?PR?ISR_EP8INOUT?VIRTUAL
+            CODE    0B22H     0001H     UNIT         ?PR?ISR_IBN?VIRTUAL
+            CODE    0B23H     0001H     UNIT         ?PR?ISR_EP0PINGNAK?VIRTUAL
+            CODE    0B24H     0001H     UNIT         ?PR?ISR_EP1PINGNAK?VIRTUAL
+            CODE    0B25H     0001H     UNIT         ?PR?ISR_EP2PINGNAK?VIRTUAL
+            CODE    0B26H     0001H     UNIT         ?PR?ISR_EP4PINGNAK?VIRTUAL
+            CODE    0B27H     0001H     UNIT         ?PR?ISR_EP6PINGNAK?VIRTUAL
+            CODE    0B28H     0001H     UNIT         ?PR?ISR_EP8PINGNAK?VIRTUAL
+            CODE    0B29H     0001H     UNIT         ?PR?ISR_ERRORLIMIT?VIRTUAL
+            CODE    0B2AH     0001H     UNIT         ?PR?ISR_EP2PIDERROR?VIRTUAL
+            CODE    0B2BH     0001H     UNIT         ?PR?ISR_EP4PIDERROR?VIRTUAL
+            CODE    0B2CH     0001H     UNIT         ?PR?ISR_EP6PIDERROR?VIRTUAL
+            CODE    0B2DH     0001H     UNIT         ?PR?ISR_EP8PIDERROR?VIRTUAL
+            CODE    0B2EH     0001H     UNIT         ?PR?ISR_EP2PFLAG?VIRTUAL
+            CODE    0B2FH     0001H     UNIT         ?PR?ISR_EP4PFLAG?VIRTUAL
+            CODE    0B30H     0001H     UNIT         ?PR?ISR_EP6PFLAG?VIRTUAL
+            CODE    0B31H     0001H     UNIT         ?PR?ISR_EP8PFLAG?VIRTUAL
+            CODE    0B32H     0001H     UNIT         ?PR?ISR_EP2EFLAG?VIRTUAL
+            CODE    0B33H     0001H     UNIT         ?PR?ISR_EP4EFLAG?VIRTUAL
+            CODE    0B34H     0001H     UNIT         ?PR?ISR_EP6EFLAG?VIRTUAL
+            CODE    0B35H     0001H     UNIT         ?PR?ISR_EP8EFLAG?VIRTUAL
+            CODE    0B36H     0001H     UNIT         ?PR?ISR_EP2FFLAG?VIRTUAL
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/27/2021  11:51:16  PAGE 7
+
+
+            CODE    0B37H     0001H     UNIT         ?PR?ISR_EP4FFLAG?VIRTUAL
+            CODE    0B38H     0001H     UNIT         ?PR?ISR_EP6FFLAG?VIRTUAL
+            CODE    0B39H     0001H     UNIT         ?PR?ISR_EP8FFLAG?VIRTUAL
+            CODE    0B3AH     0001H     UNIT         ?PR?ISR_GPIFCOMPLETE?VIRTUAL
+            CODE    0B3BH     0001H     UNIT         ?PR?ISR_GPIFWAVEFORM?VIRTUAL
+
+
+
+OVERLAY MAP OF MODULE:   .\Output\VirtualCom (FW)
+
+
+SEGMENT                                      BIT_GROUP          DATA_GROUP 
+  +--> CALLED SEGMENT                     START    LENGTH     START    LENGTH
+-----------------------------------------------------------------------------
+?PR?USB_JUMP_TABLE?USBJT                  -----    -----      -----    -----
+  +--> ?PR?ISR_SUDAV?VIRTUAL
+  +--> ?PR?ISR_SOF?VIRTUAL
+  +--> ?PR?ISR_SUTOK?VIRTUAL
+  +--> ?PR?ISR_SUSP?VIRTUAL
+  +--> ?PR?ISR_URES?VIRTUAL
+  +--> ?PR?ISR_HIGHSPEED?VIRTUAL
+  +--> ?PR?ISR_EP0ACK?VIRTUAL
+  +--> ?PR?ISR_STUB?VIRTUAL
+  +--> ?PR?ISR_EP0IN?VIRTUAL
+  +--> ?PR?ISR_EP0OUT?VIRTUAL
+  +--> ?PR?ISR_EP1IN?VIRTUAL
+  +--> ?PR?ISR_EP1OUT?VIRTUAL
+  +--> ?PR?ISR_EP2INOUT?VIRTUAL
+  +--> ?PR?ISR_EP4INOUT?VIRTUAL
+  +--> ?PR?ISR_EP6INOUT?VIRTUAL
+  +--> ?PR?ISR_EP8INOUT?VIRTUAL
+  +--> ?PR?ISR_IBN?VIRTUAL
+  +--> ?PR?ISR_EP0PINGNAK?VIRTUAL
+  +--> ?PR?ISR_EP1PINGNAK?VIRTUAL
+  +--> ?PR?ISR_EP2PINGNAK?VIRTUAL
+  +--> ?PR?ISR_EP4PINGNAK?VIRTUAL
+  +--> ?PR?ISR_EP6PINGNAK?VIRTUAL
+  +--> ?PR?ISR_EP8PINGNAK?VIRTUAL
+  +--> ?PR?ISR_ERRORLIMIT?VIRTUAL
+  +--> ?PR?ISR_EP2PIDERROR?VIRTUAL
+  +--> ?PR?ISR_EP4PIDERROR?VIRTUAL
+  +--> ?PR?ISR_EP6PIDERROR?VIRTUAL
+  +--> ?PR?ISR_EP8PIDERROR?VIRTUAL
+  +--> ?PR?ISR_EP2PFLAG?VIRTUAL
+  +--> ?PR?ISR_EP4PFLAG?VIRTUAL
+  +--> ?PR?ISR_EP6PFLAG?VIRTUAL
+  +--> ?PR?ISR_EP8PFLAG?VIRTUAL
+  +--> ?PR?ISR_EP2EFLAG?VIRTUAL
+  +--> ?PR?ISR_EP4EFLAG?VIRTUAL
+  +--> ?PR?ISR_EP6EFLAG?VIRTUAL
+  +--> ?PR?ISR_EP8EFLAG?VIRTUAL
+  +--> ?PR?ISR_EP2FFLAG?VIRTUAL
+  +--> ?PR?ISR_EP4FFLAG?VIRTUAL
+  +--> ?PR?ISR_EP6FFLAG?VIRTUAL
+  +--> ?PR?ISR_EP8FFLAG?VIRTUAL
+  +--> ?PR?ISR_GPIFCOMPLETE?VIRTUAL
+  +--> ?PR?ISR_GPIFWAVEFORM?VIRTUAL
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/27/2021  11:51:16  PAGE 8
+
+
+
+*** NEW ROOT ***************************************************
+
+?C_C51STARTUP                             -----    -----      -----    -----
+  +--> ?PR?MAIN?FW
+  +--> ?C_INITSEG
+
+?PR?MAIN?FW                               -----    -----      0008H    0010H
+  +--> ?PR?DEVINIT?VIRTUAL
+  +--> ?PR?EZUSB_DISCON?DISCON
+  +--> ?PR?SETUPCOMMAND?FW
+  +--> ?PR?TD_SUSPEND?FW
+  +--> ?PR?EZUSB_RESUME?RESUME
+  +--> ?PR?TD_RESUME?FW
+  +--> ?PR?TD_POLL?VIRTUAL
+
+?PR?EZUSB_DISCON?DISCON                   0020H.4  0000H.1    -----    -----
+  +--> ?PR?_EZUSB_DELAY?DELAY
+
+?PR?_EZUSB_DELAY?DELAY                    -----    -----      0018H    0002H
+
+?PR?SETUPCOMMAND?FW                       -----    -----      -----    -----
+  +--> ?PR?DR_GETDESCRIPTOR?FW
+  +--> ?PR?_EZUSB_GETSTRINGDSCR?GET_STRD
+  +--> ?PR?DR_GETINTERFACE?FW
+  +--> ?PR?DR_SETINTERFACE?FW
+  +--> ?PR?DR_SETCONFIGURATION?FW
+  +--> ?PR?DR_GETCONFIGURATION?FW
+  +--> ?PR?DR_GETSTATUS?FW
+  +--> ?PR?DR_CLEARFEATURE?FW
+  +--> ?PR?DR_SETFEATURE?FW
+  +--> ?PR?DR_VENDORCMND?FW
+
+?PR?EZUSB_RESUME?RESUME                   -----    -----      -----    -----
+  +--> ?PR?_EZUSB_DELAY?DELAY
+
+?PR?TD_POLL?VIRTUAL                       -----    -----      0018H    0001H
+  +--> ?PR?MAINMENUE?VIRTUAL
+
+?PR?MAINMENUE?VIRTUAL                     -----    -----      -----    -----
+  +--> ?PR?GETCC?VIRTUAL
+  +--> ?CO?VIRTUAL
+  +--> ?PR?_PUTSS?VIRTUAL
+
+?PR?GETCC?VIRTUAL                         -----    -----      0019H    0001H
+  +--> ?PR?RECEIVE?VIRTUAL
+  +--> ?PR?_PUTCC?VIRTUAL
+
+?PR?_PUTCC?VIRTUAL                        -----    -----      -----    -----
+  +--> ?PR?_TRANSMIT?VIRTUAL
+
+?PR?_PUTSS?VIRTUAL                        -----    -----      0019H    0003H
+  +--> ?PR?_PUTCC?VIRTUAL
+
+?C_INITSEG                                -----    -----      -----    -----
+  +--> ?CO?VIRTUAL
+
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/27/2021  11:51:16  PAGE 9
+
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_GETSS?VIRTUAL
+
+******************************************************************************
+* RESTRICTED VERSION WITH 1000H BYTE CODE SIZE LIMIT; USED: 0B25H BYTE (69%) *
+******************************************************************************
+
+Program Size: data=93.5 xdata=4480 code=2760
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)

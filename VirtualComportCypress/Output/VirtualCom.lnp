@@ -1,0 +1,10 @@
+".\Output\fw.obj",
+".\Output\Virtual.obj",
+".\Source\USBJmpTb.OBJ",
+".\Source\EZUSB.LIB",
+".\Output\DSCR.obj" 
+TO ".\Output\VirtualCom" 
+PRINT(".\Output\VirtualCom.m51") NOLINES, NOSYMBOLS, NOPUBLICS 
+RAMSIZE(256) 
+CODE( 0x80 )
+XDATA( 0x1000 )

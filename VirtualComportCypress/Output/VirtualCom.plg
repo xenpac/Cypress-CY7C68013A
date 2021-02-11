@@ -1,0 +1,54 @@
+<html>
+<body>
+<pre>
+<h1>µVision2 Build Log</h1>
+<h2>Project:</h2>
+C:\Keil\VirtualComportCypress\Virtual.uv2
+Project File Date:  01/22/2021
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling fw.c...
+compiling Virtual.c...
+SOURCE\VIRTUAL.C(182): warning C280: 'c': unreferenced local variable
+assembling DSCR.A51...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_GETSS?VIRTUAL
+Program Size: data=93.5 xdata=4480 code=2760
+creating hex file from ".\Output\VirtualCom"...
+User command #1: .\hex2bix -i -f 0xC2 -o .\Output\VirtualCom.iic .\Output\VirtualCom.hex
+Intel Hex file to EZ-USB Binary file conversion utility
+Copyright (c) 2012-2013, Cypress Semiconductor Inc.
+2801 Bytes written.
+Total Code Bytes = 2760
+Conversion completed successfully.
+".\Output\VirtualCom" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling fw.c...
+compiling Virtual.c...
+SOURCE\VIRTUAL.C(182): warning C280: 'c': unreferenced local variable
+assembling DSCR.A51...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_GETSS?VIRTUAL
+Program Size: data=93.5 xdata=4480 code=2760
+creating hex file from ".\Output\VirtualCom"...
+".\Output\VirtualCom" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling fw.c...
+compiling Virtual.c...
+SOURCE\VIRTUAL.C(182): warning C280: 'c': unreferenced local variable
+assembling DSCR.A51...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_GETSS?VIRTUAL
+Program Size: data=93.5 xdata=4480 code=2760
+creating hex file from ".\Output\VirtualCom"...
+User command #1: .\hex2bix -i -f 0xC2 -o .\Output\VirtualCom.iic .\Output\VirtualCom.hex
+Intel Hex file to EZ-USB Binary file conversion utility
+Copyright (c) 2012-2013, Cypress Semiconductor Inc.
+2801 Bytes written.
+Total Code Bytes = 2760
+Conversion completed successfully.
+".\Output\VirtualCom" - 0 Error(s), 2 Warning(s).
